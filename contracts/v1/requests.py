@@ -21,9 +21,9 @@ class CrawledSocialDataRequest(object):
 
     @classmethod
     def from_json(cls, data):
-        students = list(map(CrawledSocialDataRecord.from_json, data['data']))
-        return cls(students)
+        x = list(map(CrawledSocialDataRecord.from_json, data['data']))
+        return cls(x)
 
     def serialize(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
     
