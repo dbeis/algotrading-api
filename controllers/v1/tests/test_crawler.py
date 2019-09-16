@@ -2,7 +2,7 @@ import flask
 import controllers.v1.crawler as controller
 from contracts.v1 import requests
 from controllers.common import ok, error, not_found
-from entities import *
+from entities import models
 import api
 
 def test_insert_data_correct(mocker):   
@@ -13,10 +13,10 @@ def test_insert_data_correct(mocker):
     ])
 
     expected_entities_inserted = [models.CrawledSocialDataEntity(cid = x.cid, content = x.content, timestamp = x.timestamp)
-        for x in data_to_insert]
+        for x in data_to_insert.data]
 
     expected_tags_inserted = [models.CrawledSocialDataEntityTags(tag = t, cid = x.cid)
-        for x in data_to_insert
+        for x in expected_entities_inserted
         for t in x.tags]
 
     request_mock = mocker.patch.object(flask, 'request')

@@ -1,6 +1,8 @@
 import os
+import sys
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+
 
 app = Flask('algotrading-api', instance_relative_config=True)
 app.config.from_mapping(
@@ -9,11 +11,13 @@ app.config.from_mapping(
 )
 
 db = SQLAlchemy(app)
-from entities import *
-db.create_all()
 
-from controllers import install_controllers
-install_controllers('/api')
+# for unit tests
+if 'pytest' not in sys.modules:
+    from entities import *
+    db.create_all()
+    from controllers import install_controllers
+    install_controllers('/api')
 
 # leave this for testing whatever
 @app.route('/')
