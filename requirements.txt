@@ -3,3 +3,4 @@ flask-marshmallow
 flask-sqlalchemy 
 marshmallow-sqlalchemy
 pytest
+requests

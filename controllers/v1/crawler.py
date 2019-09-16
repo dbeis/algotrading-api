@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
-from contracts.v1 import *
-from entities import *
+from contracts.v1 import requests, responses
+from entities import models
 from api import db
 
 from ..common import ok, error, not_found
@@ -62,15 +62,13 @@ def insert_data():
 
 @bp_crawler.route('/latest', methods=['GET'])
 def latest():
-    r = models.CrawledSocialDataEntity.query.order_by(model.CrawledSocialDataEntity.timestamp.desc()).limit(1).all()
-
+    r = models.CrawledSocialDataEntity.query.order_by(models.CrawledSocialDataEntity.timestamp.desc()).limit(1).all()
     if r is None or len(r) == 0:
         return not_found()
-    
     result = r[0]
-
-    return responses.CrawledSocialDataRecordResponse(
+    print(r[0])
+    return ok(responses.CrawledSocialDataRecordResponse(
         cid = result.cid, 
         content = result.content,
         timestamp = result.timestamp,
-    ).serialize()
+    ).serialize())
