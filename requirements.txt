@@ -2,3 +2,4 @@ flask
 flask-marshmallow
 flask-sqlalchemy 
 marshmallow-sqlalchemy
+pytest
