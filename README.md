@@ -10,6 +10,9 @@
 
 `python start_api.py`
 
+## Run the tests
+`python -m pytest`
+
 ## Running the crawler(s)
 
 `python start_crawler.py [crawler_name] (params)`

@@ -27,7 +27,6 @@ def test_insert_data_correct(mocker):
     result = controller.insert_data()
 
     # assert
-
     db_mock.session.add_all.assert_called_with(*expected_entities_inserted, *expected_tags_inserted)
     db_mock.session.commit.assert_any_call()
 
