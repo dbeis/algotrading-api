@@ -6,8 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask('algotrading-api', instance_relative_config=True)
 app.config.from_mapping(
-    SECRET_KEY='dev',
-    SQLALCHEMY_DATABASE_URI="sqlite:////tmp/test.db"
+    SECRET_KEY=os.getenv('SECRET_KEY', 'dev'),
+    SQLALCHEMY_DATABASE_URI=os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:////tmp/test.db')
 )
 
 db = SQLAlchemy(app)
