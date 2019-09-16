@@ -1,4 +1,3 @@
-__all__ = ['v1', 'common']
 from .v1 import v1_installer
 
 def install_controllers(prefix):

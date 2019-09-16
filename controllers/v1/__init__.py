@@ -1,4 +1,3 @@
-#__all__ = ["crawler"]
 from .crawler import bp_crawler
 from api import app
 
