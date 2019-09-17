@@ -16,11 +16,12 @@ def test_insert_data_correct(mocker):
         for x in data_to_insert.data]
 
     expected_tags_inserted = [models.CrawledSocialDataEntityTags(tag = t, cid = x.cid)
-        for x in expected_entities_inserted
+        for x in data_to_insert.data
         for t in x.tags]
 
     request_mock = mocker.patch.object(flask, 'request')
     request_mock.data = data_to_insert.serialize()
+
     db_mock = request_mock = mocker.patch.object(api, 'db')
 
     # act

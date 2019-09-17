@@ -2,10 +2,7 @@ from crawler.common import fetch_social_progress, post_social_data
 from contracts.v1 import requests, responses
 import time 
 import json
-
-def notify_discord(message):
-    # switch this off while dev ofc
-    pass
+from discord import notify, status_update, human_required_update
 
 def start_tweet_crawler(config):
     print('\n\n')
@@ -61,7 +58,7 @@ def start_tweet_crawler(config):
         except BaseException as e:
             print(str(e))
             # if unknown exception happens and we can't automatically recover, notify discord
-            notify_discord(str(e))
+            notify('crawler', human_required_update(str(e), 'twitter'))
             return
 
         print(f'Successfully posted tweets cids: {new_data.data[0].cid} ~ {new_data.data[-1].cid}')
