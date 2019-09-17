@@ -1,4 +1,4 @@
-from crawler.common import fetch_social_progress, post_social_data
+from ..common import *
 from contracts.v1 import *
 import time 
 import json
