@@ -1,8 +1,8 @@
 from crawler.common import fetch_social_progress, post_social_data
-from contracts.v1 import requests, responses
+from contracts.v1 import *
 import time 
 import json
-from discord import notify, status_update, human_required_update
+from discord import *
 
 def start_tweet_crawler(config):
     print('\n\n')
@@ -19,7 +19,7 @@ def start_tweet_crawler(config):
             print(f'Database is empty. Starting from cid: {latest_cid}')
         elif r.status_code == 200:
             print(r.json())
-            latest_data = responses.CrawledSocialDataRecordResponse.from_json(json.loads(r.json()))
+            latest_data = CrawledSocialDataRecordResponse.from_json(json.loads(r.json()))
             latest_cid = latest_data.cid
         else:
             raise Exception(f'Bad status code {r.status_code}')
@@ -37,8 +37,8 @@ def start_tweet_crawler(config):
         # include error handling for twitter etc
 
         # == # map the fetched data to the contracts
-        new_data = requests.CrawledSocialDataRequest([
-            requests.CrawledSocialDataRecord(
+        new_data = CrawledSocialDataRequest([
+            CrawledSocialDataRecord(
                 'cid500',
                 'this is the tweet content',
                 1.0, # timestamp -- parse that properly so it's unix time
