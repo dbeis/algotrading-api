@@ -1,8 +1,26 @@
-version: '2.1'
+version: '3.1'
 
 services:
   algotrading-api:
     image: algotrading-api
+    restart: always
     build: .
     ports:
       - 8080:8080
+    depends_on: 
+      - db-server
+  db-server:
+    image: mysql:5.7
+    environment:
+      - MYSQL_DATABASE: 'db'
+      - MYSQL_USER: 'user'
+      - MYSQL_PASSWORD: 'password'
+      - MYSQL_ROOT_PASSWORD: 'toor'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - sql:/var/lib/mysql
+  volumes:
+    sql:
