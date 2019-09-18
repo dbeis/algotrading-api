@@ -46,6 +46,7 @@ jobs:
       - image: circleci/python:3.6.1
     working_directory: ~/repo
     steps:
+      - checkout 
       - run:
           name: prebuild
           command: |
