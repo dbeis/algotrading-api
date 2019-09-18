@@ -26,10 +26,11 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            python3 -m pytest --circleci-parallelize
+            python3 -m pytest --circleci-parallelize --junitxml=test-reports/junit.xml
+      - store_test_results:
+          path: test-reports
       - store_artifacts:
           path: test-reports
-          destination: test-reports
   hold:
     docker:
       - image: circleci/python:3.6.1
@@ -57,7 +58,7 @@ jobs:
           name: build and publish docker image
           command: |
             docker build -t $IMAGE_NAME:$IMAGE_TAG .
-            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            echo "$DOCKER_PWD" | docker login --username $DOCKER_LOGIN --password-stdin
             docker push $IMAGE_NAME:$TAG
 workflows:
   version: 2
