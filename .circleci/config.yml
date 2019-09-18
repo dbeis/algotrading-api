@@ -39,7 +39,7 @@ jobs:
       - run:
           name: wait for approval
           command: echo 'Waiting approval for dockerhub'
-  build_image:
+  publish_dockerhub:
     environment:
       IMAGE_NAME: notalgotrading/base
       FLASK_CONFIG: testing
@@ -74,7 +74,7 @@ workflows:
             type: approval
             requires:
               - build_test
-        - build_image:
+        - publish_dockerhub:
             requires:
               - hold
             filters:
