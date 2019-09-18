@@ -2,6 +2,9 @@
 
 [![CircleCI](https://circleci.com/gh/bitaesthetics/algotrading-api/tree/master.svg?style=svg)](https://circleci.com/gh/bitaesthetics/algotrading-api/tree/master)
 
+## Docker
+Most up to date image would be `notalgotrading/base:latest`
+
 ## Running the api
 
 ### Dependencies
