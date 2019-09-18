@@ -6,4 +6,5 @@ from entities import models
 import api
 
 def test_insert_data_correct(mocker):   
+    pass
     # https://gist.github.com/Zarkopafilis/7a4215383c963507cccfa8899c408a22
