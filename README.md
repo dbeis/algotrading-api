@@ -1,5 +1,7 @@
 # algotrading-api
 
+[![CircleCI](https://circleci.com/gh/bitaesthetics/algotrading-api/tree/master.svg?style=svg)](https://circleci.com/gh/bitaesthetics/algotrading-api/tree/master)
+
 ## Running the api
 
 ### Dependencies
