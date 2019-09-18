@@ -10,7 +10,7 @@
 
 `python start_api.py`
 
-## Run the tests 
+## Run the tests
 `python -m pytest`
 
 ## Running the crawler(s)
