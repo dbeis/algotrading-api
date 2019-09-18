@@ -58,7 +58,8 @@ jobs:
           name: build and publish docker image
           command: |
             docker build -t $IMAGE_NAME:$IMAGE_TAG .
-            echo "${DOCKER_PWD}" | docker login --username ${DOCKER_LOGIN} --password-stdin
+            echo $DOCKER_LOGIN
+            echo "$DOCKER_PWD" | docker login --username $DOCKER_LOGIN --password-stdin
             docker push $IMAGE_NAME:$TAG
 workflows:
   version: 2
