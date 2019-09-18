@@ -1,37 +1,80 @@
 version: 2
 jobs:
-  build:
+  build_test:
+    environment:
+      FLASK_CONFIG: testing
     docker:
       - image: circleci/python:3.6.1
-
     working_directory: ~/repo
-
     steps:
       - checkout
-
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "requirements.txt" }}
             - v1-dependencies-
-
       - run:
           name: install dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-
       - save_cache:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
-
       - run:
           name: run tests
           command: |
             . venv/bin/activate
             python3 -m pytest --circleci-parallelize
-
-      - store_artifacts:
+      - store_test_reports:
           path: test-reports
           destination: test-reports
+  hold:
+    docker:
+      - image: circleci/python:3.6.1
+    working_directory: ~/repo
+    steps:
+      - run:
+          name: wait for approval
+          command: echo 'Waiting approval for dockerhub'
+  build_image:
+    environment:
+      IMAGE_NAME: notalgotrading/base
+      FLASK_CONFIG: testing
+    docker:
+      - image: circleci/python:3.6.1
+    working_directory: ~/repo
+    steps:
+      - run:
+          name: prebuild
+          command: |
+            echo 'export IMAGE_TAG=0.0.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: build and publish docker image
+          command: |
+            docker build -t $IMAGE_NAME:$IMAGE_TAG .
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push $IMAGE_NAME:$TAG
+workflows:
+  version: 2
+  build-deploy:
+      jobs:
+        - build_test:
+            filters:
+              branches:
+                ignore:
+                  - develop
+                  - /feature-.*/
+        - hold:
+            type: approval
+            requires:
+              - build
+        - build_image:
+            requires:
+              - hold
+            filters:
+              branches:
+                only: master
