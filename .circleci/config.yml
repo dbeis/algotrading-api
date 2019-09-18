@@ -60,7 +60,7 @@ jobs:
           command: |
             docker build -t $IMAGE_NAME:$IMAGE_TAG .
             docker login -u $DOCKER_LOGIN -p $DOCKER_PWD
-            docker push "$IMAGE_NAME:$TAG"
+            docker push "$IMAGE_NAME:$IMAGE_TAG"
 workflows:
   version: 2
   build-deploy:
