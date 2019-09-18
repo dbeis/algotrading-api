@@ -53,6 +53,7 @@ jobs:
           command: |
             echo 'export IMAGE_TAG=0.0.${CIRCLE_BUILD_NUM}' >> $BASH_ENV
       - setup_remote_docker:
+          version: 18.06.0-ce
           docker_layer_caching: true
       - run:
           name: build and publish docker image
