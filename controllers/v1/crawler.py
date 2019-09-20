@@ -1,14 +1,15 @@
-from flask import Blueprint, request, jsonify
-from contracts.v1 import *
-from entities import *
-from api import db
-
-from ..common import ok, error, not_found
-
+import flask
+import api
 import sys
 import json
 
-bp_crawler = Blueprint('crawler', __name__)
+from contracts.v1 import *
+from entities import *
+from ..common import ok, error, not_found
+from flask import request
+
+
+bp_crawler = flask.Blueprint('crawler', __name__)
 
 @bp_crawler.route('/', methods=['GET'])
 def index():
@@ -16,14 +17,14 @@ def index():
 
 @bp_crawler.route('/query', methods=['GET'])
 def query_data():
-    page = request.args.get('page', default = 1, type = int)
+    page = flask.request.args.get('page', default = 1, type = int)
 
-    pageSize = request.args.get('pageSize', default = 200, type = int) 
+    pageSize = flask.request.args.get('pageSize', default = 200, type = int) 
     pageSize =  200 if pageSize > 200 else pageSize
 
-    tags = request.args.getlist('tags', default = 1, type = int)
-    fromTime = request.args.get('fromTime', default = 0, type = float)
-    untilTime = request.args.get('untilTime', default = sys.float_info.max , type = float)
+    tags = flask.request.args.getlist('tags', default = 1, type = int)
+    fromTime = flask.request.args.get('fromTime', default = 0, type = float)
+    untilTime = flask.request.args.get('untilTime', default = sys.float_info.max , type = float)
 
     # validate query params
     
@@ -33,7 +34,7 @@ def query_data():
 
 @bp_crawler.route('/insert', methods=['POST'])
 def insert_data():
-    req = CrawledSocialDataRequest.from_json(json.loads(request.data))
+    req = CrawledSocialDataRequest.from_json(json.loads(flask.request.data))
 
     if req is None or req.data is None or len(req.data) == 0:
         return json.dumps({ error: ''})
@@ -45,17 +46,17 @@ def insert_data():
             return error('Not enough tags') 
         # check max tag count maybe?
 
-    db.session.add_all([
+    api.db.session.add_all([
         CrawledSocialDataEntity(cid = x.cid, content = x.content, timestamp = x.timestamp)
         for x in req.data
     ])
-    db.session.add_all([
+    api.db.session.add_all([
         CrawledSocialDataEntityTags(tag = t, cid = x.cid)
         for x in req.data
         for t in x.tags
     ])
 
-    db.session.commit()
+    api.db.session.commit()
 
     return ok()
 

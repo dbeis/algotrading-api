@@ -8,7 +8,14 @@ class CrawledSocialDataEntity(db.Model):
     timestamp = db.Column(db.Float())
 
     def __repr__(self):
-        return '<CrawledSocialDataEntity %r>' % self.cid
+        return '<CrawledSocialDataEntity {0} {1} {2}>'.format(self.cid, self.content, str(self.timestamp))
+
+    def __eq__(self, other):
+        if isinstance(other, CrawledSocialDataEntity):
+            return self.cid == other.cid and \
+                self.content == other.content and \
+                self.timestamp == other.timestamp
+        return False
 
 class CrawledSocialDataEntityTags(db.Model):
     __tablename__ = 'crawledsocialdataentitytags'
@@ -17,4 +24,11 @@ class CrawledSocialDataEntityTags(db.Model):
     cid = db.Column(db.String(255), db.ForeignKey('crawledsocialdataentity.cid'), primary_key=True)
 
     def __repr__(self):
-        return '<CrawledSocialDataEntity %r %r>' % self.tag, self.cid
+        return '<CrawledSocialDataEntityTags {0} {1}>'.format(self.tag, self.cid)
+
+    def __eq__(self, other):
+        if isinstance(other, CrawledSocialDataEntity):
+            return self.tag == other.tag and self.cid == other.cid
+        return False
+
+        
