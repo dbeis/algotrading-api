@@ -1,5 +1,5 @@
 import flask
-import controllers.v1.crawler as controller
+from controllers.v1 import crawler as controller
 import api
 
 from contracts.v1 import requests
