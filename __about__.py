@@ -1,0 +1,8 @@
+__title__ = 'algotrading-api'
+__package_name = 'algotrading-api'
+__version__ = '0.1.0'
+__description__ = 'End-to-end framework for algorithmic trading or Quant trading solutions.'
+__author__ = 'The BitAesthetics team'
+__email__ = ''
+__github__  = 'https://github.com/bitaesthetics/algotrading-api'
+__licence__ = 'MIT'
