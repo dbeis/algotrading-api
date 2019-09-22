@@ -1,5 +1,6 @@
 from typing import List
 import json 
+#Todo: Bad practice fix Decouple the response class -> Per object requests/responses.
 
 class CrawledSocialDataRecordResponse(object):
 

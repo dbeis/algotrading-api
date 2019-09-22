@@ -1,6 +1,6 @@
 from typing import List
 import json
-
+#Todo: Bad practice fix Decouple the request class -> Per object requests/responses.
 class CrawledSocialDataRecord(object):
 
     def __init__(self, cid: str, content: str, timestamp: float, tags: List[str]) -> None:
