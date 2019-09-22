@@ -3,9 +3,9 @@ import api
 import sys
 import json
 
-from contracts.v1 import *
+from contracts import *
 from entities import *
-from ..common import ok, error, not_found
+from .common import ok, error, not_found
 from flask import request
 
 

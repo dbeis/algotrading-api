@@ -1,8 +1,8 @@
 import flask
-from controllers.v1 import crawler as controller
+from controllers import crawler as controller
 import api
 
-from contracts.v1 import requests
+from contracts import requests
 from controllers.common import ok, error, not_found
 from entities import models
 

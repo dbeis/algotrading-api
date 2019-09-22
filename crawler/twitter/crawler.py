@@ -1,5 +1,5 @@
 from ..common import *
-from contracts.v1 import *
+from contracts import *
 import time 
 import json
 from discord import *

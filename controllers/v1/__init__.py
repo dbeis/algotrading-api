@@ -1,1 +1,0 @@
-from .installer import v1_installer
