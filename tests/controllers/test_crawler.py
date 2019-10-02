@@ -2,21 +2,22 @@ import flask
 from controllers import crawler as controller
 import api
 
-from contracts import requests
+from contracts.CrawledDataRecord import *
+from contracts.CrawledDataRecordList import *
 from controllers.common import ok, error, not_found
 from entities import models
 
 def test_insert_data_correct(mocker):   
     # arrange
-    data_to_insert = requests.CrawledSocialDataRequest([
-        requests.CrawledSocialDataRecord('cid0', 'content0', 123.4, ['tag0', 'tag1']),
-        requests.CrawledSocialDataRecord('cid1', 'content1', 123.4, ['tag1', 'tag2'])
+    data_to_insert = CrawledDataListRequest([
+        CrawledData('cid0', 'content0', 123.4, ['tag0', 'tag1']),
+        CrawledData('cid1', 'content1', 123.4, ['tag1', 'tag2'])
     ])
 
-    expected_entities_inserted = [models.CrawledSocialDataEntity(cid = x.cid, content = x.content, timestamp = x.timestamp)
+    expected_entities_inserted = [models.CrawledDataListEntity(cid = x.cid, content = x.content, timestamp = x.timestamp)
         for x in data_to_insert.data]
 
-    expected_tags_inserted = [models.CrawledSocialDataEntityTags(tag = t, cid = x.cid)
+    expected_tags_inserted = [models.CrawledDataListEntityTags(tag = t, cid = x.cid)
         for x in data_to_insert.data
         for t in x.tags]
 

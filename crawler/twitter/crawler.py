@@ -19,7 +19,7 @@ def start_tweet_crawler(config):
             print(f'Database is empty. Starting from cid: {latest_cid}')
         elif r.status_code == 200:
             print(r.json())
-            latest_data = CrawledSocialDataRecordResponse.from_json(json.loads(r.json()))
+            latest_data = CrawledDataResponse.from_json(json.loads(r.json()))
             latest_cid = latest_data.cid
         else:
             raise Exception(f'Bad status code {r.status_code}')
@@ -37,8 +37,8 @@ def start_tweet_crawler(config):
         # include error handling for twitter etc
 
         # == # map the fetched data to the contracts
-        new_data = CrawledSocialDataRequest([
-            CrawledSocialDataRecord(
+        new_data = CrawledDataListRequest([
+            CrawledData(
                 'cid500',
                 'this is the tweet content',
                 1.0, # timestamp -- parse that properly so it's unix time

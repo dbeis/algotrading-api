@@ -1,33 +1,33 @@
 from api import db
 
-class CrawledSocialDataEntity(db.Model):
-    __tablename__ = 'crawledsocialdataentity'
+class CrawledDataListEntity(db.Model):
+    __tablename__ = 'CrawledDataListentity'
 
     cid = db.Column(db.String(255), primary_key=True)
     content = db.Column(db.Text())
     timestamp = db.Column(db.Float())
 
     def __repr__(self):
-        return '<CrawledSocialDataEntity {0} {1} {2}>'.format(self.cid, self.content, str(self.timestamp))
+        return '<CrawledDataListEntity {0} {1} {2}>'.format(self.cid, self.content, str(self.timestamp))
 
     def __eq__(self, other):
-        if isinstance(other, CrawledSocialDataEntity):
+        if isinstance(other, CrawledDataListEntity):
             return self.cid == other.cid and \
                 self.content == other.content and \
                 self.timestamp == other.timestamp
         return False
 
-class CrawledSocialDataEntityTags(db.Model):
-    __tablename__ = 'crawledsocialdataentitytags'
+class CrawledDataListEntityTags(db.Model):
+    __tablename__ = 'crawleddatalistentitytags'
 
     tag = db.Column(db.String(255), primary_key=True)
-    cid = db.Column(db.String(255), db.ForeignKey('crawledsocialdataentity.cid'), primary_key=True)
+    cid = db.Column(db.String(255), db.ForeignKey('crawleddatalistentity.cid'), primary_key=True)
 
     def __repr__(self):
-        return '<CrawledSocialDataEntityTags {0} {1}>'.format(self.tag, self.cid)
+        return '<CrawledDataListEntityTags {0} {1}>'.format(self.tag, self.cid)
 
     def __eq__(self, other):
-        if isinstance(other, CrawledSocialDataEntity):
+        if isinstance(other, CrawledDataListEntity):
             return self.tag == other.tag and self.cid == other.cid
         return False
 

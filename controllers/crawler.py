@@ -3,7 +3,8 @@ import api
 import sys
 import json
 
-from contracts import *
+from contracts.CrawledDataRecord import *
+from contracts.CrawledDataRecordList import *
 from entities import *
 from .common import ok, error, not_found
 from flask import request
@@ -34,7 +35,7 @@ def query_data():
 
 @bp_crawler.route('/insert', methods=['POST'])
 def insert_data():
-    req = CrawledSocialDataRequest.from_json(json.loads(flask.request.data))
+    req = CrawledDataListRequest.from_json(json.loads(flask.request.data))
 
     if req is None or req.data is None or len(req.data) == 0:
         return json.dumps({ error: ''})
@@ -47,11 +48,11 @@ def insert_data():
         # check max tag count maybe?
 
     api.db.session.add_all([
-        CrawledSocialDataEntity(cid = x.cid, content = x.content, timestamp = x.timestamp)
+        CrawledDataListEntity(cid = x.cid, content = x.content, timestamp = x.timestamp)
         for x in req.data
     ])
     api.db.session.add_all([
-        CrawledSocialDataEntityTags(tag = t, cid = x.cid)
+        CrawledDataListEntityTags(tag = t, cid = x.cid)
         for x in req.data
         for t in x.tags
     ])
@@ -63,12 +64,12 @@ def insert_data():
 
 @bp_crawler.route('/latest', methods=['GET'])
 def latest():
-    r = CrawledSocialDataEntity.query.order_by(CrawledSocialDataEntity.timestamp.desc()).limit(1).all()
+    r = CrawledDataListEntity.query.order_by(CrawledDataListEntity.timestamp.desc()).limit(1).all()
     if r is None or len(r) == 0:
         return not_found()
     result = r[0]
     print(r[0])
-    return ok(CrawledSocialDataRecordResponse(
+    return ok(CrawledDataResponse(
         cid = result.cid, 
         content = result.content,
         timestamp = result.timestamp,

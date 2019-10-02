@@ -1,6 +1,17 @@
 from typing import List
-import json 
-#Todo: Bad practice fix Decouple the response class -> Per object requests/responses.
+import json
+
+class CrawledData(object):
+
+    def __init__(self, cid: str, content: str, timestamp: float, tags: List[str]) -> None:
+        self.cid = cid
+        self.content = content
+        self.timestamp = timestamp
+        self.tags = tags
+    
+    @classmethod
+    def from_json(cls, data):
+        return cls(**data)
 
 class CrawledDataResponse(object):
 
@@ -15,3 +26,4 @@ class CrawledDataResponse(object):
 
     def serialize(self):
         return json.dumps(self.__dict__)
+    
