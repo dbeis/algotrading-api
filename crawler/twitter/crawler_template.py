@@ -3,12 +3,51 @@ from contracts import *
 import time 
 import json
 from discord import *
+import requests
+from bs4 import BeautifulSoup
+import re
+
+# Extract data from a tweets batch
+def tweetsFromBatch(tweets_batch):
+    tweets_soup = BeautifulSoup(tweets_batch, 'html.parser')
+    html_tweets = tweets_soup.find_all('li', {'id': re.compile(r'^stream-item-tweet')})
+    crawledData_tweets = []
+    for html_tweet in html_tweets:
+        CrawledData_tweets.append(
+            CrawledData( 
+                html_tweet.get('data-item-id'),
+                tweet_content = html_tweet.select_one('li .content .js-tweet-text-container').text,
+                tweet_timestamp = html_tweet.select_one('li .time span[data-time]').get('data-time'),
+                ['bitcoin']
+            )
+        )
+    
+    return crawledData_tweets
+
+# Set headers as needed
+def setHeaders(headers, url=None):
+    # headers param includes those returned from the previous request
+    # We then set some of them as needed
+    if url:
+        headers['Referer'] = url # Optional
+    headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8' # Optional
+    headers['Accept-Language'] = 'en' # Optional
+    headers['User-Agent'] = 'TweetScraper' # Mandatory
+    headers['Accept-Encoding'] = 'gzip,deflate' # Optional
 
 def start_tweet_crawler(config):
     print('\n\n')
 
     print('Retrieving latest data for progress')
+    # Init config
+    interval_secs = 5
+    url = 'https://twitter.com/i/search/timeline?l=&f=tweets&q=bitcoin&src=typed&max_position='
+    min_position = ''
+    has_more_items = True
+    min_position = ''
+    
     # step one, fetch progress
+    '''
     latest_data = None
     latest_cid = None
     try:
@@ -29,22 +68,37 @@ def start_tweet_crawler(config):
         # add more handling and discord / service worker notifications if we automate deploying it
         print('Startup failed. Aborting.')
         return
+    '''
     
     # step two, data fetch-post loop
-    while(True):
+    while(has_more_items):
         print(f'Fetching more twitter data starting from cid {latest_cid}')
         # data fetch ..snip.. (omitted for brevity)
+        # Get headers and add them to next request
+        headers = session.cookies.get_dict()
+        setHeaders(headers, url + min_position)
+        
+        # Get request (XHR)
         # include error handling for twitter etc
+        try:
+            response = session.get(url + min_position, headers=headers)    
+        except requests.exceptions.Timeout:
+            raise
+            # Maybe set up for a retry, or continue in a retry loop
+        except requests.exceptions.TooManyRedirects:
+            raise
+            # Tell the user their URL was bad and try a different one
+        except requests.exceptions.HTTPError as err:
+            raise
+        except requests.exceptions.RequestException as err:
+            raise
+            # catastrophic error. bail.
 
+        
+        json_response = json.loads(response.content.decode("utf-8"))        
+        
         # == # map the fetched data to the contracts
-        new_data = CrawledDataListRequest([
-            CrawledData(
-                'cid500',
-                'this is the tweet content',
-                1.0, # timestamp -- parse that properly so it's unix time
-                ['twitter', 'bitcoin'] # example | pass hashtags / search query through config
-            )
-        ])
+        new_data = CrawledDataListRequest(tweetsFromBatch(json_response['items_html']))
 
         # post them to the server
         try:
@@ -63,11 +117,12 @@ def start_tweet_crawler(config):
 
         print(f'Successfully posted tweets cids: {new_data.data[0].cid} ~ {new_data.data[-1].cid}')
         # set up for next iteration
-        latest_cid = new_data.data[-1].cid
+        min_position = json_response['min_position']
 
         # if reached end of tweets, wait some time till you get new ones (like an hour)
         # ..snip..
 
         # account for twitter's api usage metering
         # ..snip.. // sleep()
+        time.sleep(has_more_items)
 
