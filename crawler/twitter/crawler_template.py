@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 import re
 
 # Extract data from a tweets batch
-def tweetsFromBatch(tweets_batch):
+def tweets_from_batch(tweets_batch):
     tweets_soup = BeautifulSoup(tweets_batch, 'html.parser')
     html_tweets = tweets_soup.find_all('li', {'id': re.compile(r'^stream-item-tweet')})
     crawledData_tweets = []
@@ -24,9 +24,7 @@ def tweetsFromBatch(tweets_batch):
     
     return crawledData_tweets
 
-# Set headers as needed
-def setHeaders(headers, url=None):
-    # headers param includes those returned from the previous request
+def set_headers(headers, url=None):
     # We then set some of them as needed
     if url:
         headers['Referer'] = url # Optional
@@ -40,65 +38,52 @@ def start_tweet_crawler(config):
 
     print('Retrieving latest data for progress')
     # Init config
-    interval_secs = 5
+    interval_secs = 5 # Minimum 1 sec for scraping fairplay
     url = 'https://twitter.com/i/search/timeline?l=&f=tweets&q=bitcoin&src=typed&max_position='
     min_position = ''
     has_more_items = True
     min_position = ''
     
     # step one, fetch progress
-    '''
-    latest_data = None
-    latest_cid = None
-    try:
-        r = fetch_social_progress()
-        if r.status_code == 404:
-            # first time that this boots, with no data on the db
-            latest_cid = 'cid0' # fill this properly with the first tweet we want
-            print(f'Database is empty. Starting from cid: {latest_cid}')
-        elif r.status_code == 200:
-            print(r.json())
-            latest_data = CrawledDataResponse.from_json(json.loads(r.json()))
-            latest_cid = latest_data.cid
-        else:
-            raise Exception(f'Bad status code {r.status_code}')
-    except BaseException as e:
-        print(str(e))
-        # let this as-is if we are to start crawler processes manually
-        # add more handling and discord / service worker notifications if we automate deploying it
-        print('Startup failed. Aborting.')
-        return
-    '''
-    
+
     # step two, data fetch-post loop
     while(has_more_items):
         print(f'Fetching more twitter data starting from cid {latest_cid}')
         # data fetch ..snip.. (omitted for brevity)
         # Get headers and add them to next request
         headers = session.cookies.get_dict()
-        setHeaders(headers, url + min_position)
+        set_headers(headers, url + min_position)
         
         # Get request (XHR)
         # include error handling for twitter etc
         try:
             response = session.get(url + min_position, headers=headers)    
-        except requests.exceptions.Timeout:
-            raise
+        except requests.exceptions.Timeout as e:
+            print(str(e))
+            # if timeout error happens, notify discord
+            notify('crawler', warning_update(str(e), 'twitter'))
+            continue
             # Maybe set up for a retry, or continue in a retry loop
-        except requests.exceptions.TooManyRedirects:
-            raise
+        except requests.exceptions.TooManyRedirects as e:
+            print(str(e))
+            notify('crawler', error_update(str(e), 'twitter'))
+            return
             # Tell the user their URL was bad and try a different one
-        except requests.exceptions.HTTPError as err:
-            raise
-        except requests.exceptions.RequestException as err:
-            raise
+        except requests.exceptions.HTTPError as e:
+            print(str(e))
+            # if http error, notify discord
+            notify('crawler', error_update(str(e), 'twitter'))
+            return
+        except requests.exceptions.RequestException as e:
+            print(str(e))
+            notify('crawler', error_update(str(e), 'twitter'))
+            return
             # catastrophic error. bail.
 
-        
         json_response = json.loads(response.content.decode("utf-8"))        
-        
+                
         # == # map the fetched data to the contracts
-        new_data = CrawledDataListRequest(tweetsFromBatch(json_response['items_html']))
+        new_data = CrawledDataListRequest(tweets_from_batch(json_response['items_html']))
 
         # post them to the server
         try:
@@ -118,11 +103,12 @@ def start_tweet_crawler(config):
         print(f'Successfully posted tweets cids: {new_data.data[0].cid} ~ {new_data.data[-1].cid}')
         # set up for next iteration
         min_position = json_response['min_position']
+        has_more_items = json_response['has_more_items']
 
         # if reached end of tweets, wait some time till you get new ones (like an hour)
         # ..snip..
 
         # account for twitter's api usage metering
         # ..snip.. // sleep()
-        time.sleep(has_more_items)
+        time.sleep(interval_secs)
 
