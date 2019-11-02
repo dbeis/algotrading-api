@@ -16,8 +16,8 @@ def tweets_from_batch(tweets_batch):
         CrawledData_tweets.append(
             CrawledData( 
                 html_tweet.get('data-item-id'),
-                tweet_content = html_tweet.select_one('li .content .js-tweet-text-container').text,
-                tweet_timestamp = html_tweet.select_one('li .time span[data-time]').get('data-time'),
+                html_tweet.select_one('li .content .js-tweet-text-container').text,
+                html_tweet.select_one('li .time span[data-time]').get('data-time'),
                 ['bitcoin']
             )
         )
