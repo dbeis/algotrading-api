@@ -13,7 +13,7 @@ def tweets_from_batch(tweets_batch):
     html_tweets = tweets_soup.find_all('li', {'id': re.compile(r'^stream-item-tweet')})
     crawledData_tweets = []
     for html_tweet in html_tweets:
-        CrawledData_tweets.append(
+        crawledData_tweets.append(
             CrawledData( 
                 html_tweet.get('data-item-id'),
                 html_tweet.select_one('li .content .js-tweet-text-container').text,
@@ -35,20 +35,22 @@ def set_headers(headers, url=None):
 
 def start_tweet_crawler(config):
     print('\n\n')
-
     print('Retrieving latest data for progress')
     # Init config
-    interval_secs = 5 # Minimum 1 sec for scraping fairplay
-    url = 'https://twitter.com/i/search/timeline?l=&f=tweets&q=bitcoin&src=typed&max_position='
+    session = requests.Session()
+    url = config['url'] if 'url' in config and config['url'] else \
+        'https://twitter.com/i/search/timeline?l=&f=tweets&q=bitcoin&src=typed&max_position='
+    wait_secs = config['wait_secs'] if 'wait_secs' in config and config['wait_secs'] else \
+        5 # Minimum 1 sec for scraping fairplay
     min_position = ''
     has_more_items = True
-    min_position = ''
+
     
     # step one, fetch progress
 
     # step two, data fetch-post loop
     while(has_more_items):
-        print(f'Fetching more twitter data starting from cid {latest_cid}')
+        #print(f'Fetching more twitter data starting from cid {latest_cid}')
         # data fetch ..snip.. (omitted for brevity)
         # Get headers and add them to next request
         headers = session.cookies.get_dict()
@@ -84,7 +86,7 @@ def start_tweet_crawler(config):
                 
         # == # map the fetched data to the contracts
         new_data = CrawledDataListRequest(tweets_from_batch(json_response['items_html']))
-
+        
         # post them to the server
         try:
             response = post_social_data(new_data)
@@ -110,5 +112,5 @@ def start_tweet_crawler(config):
 
         # account for twitter's api usage metering
         # ..snip.. // sleep()
-        time.sleep(interval_secs)
+        time.sleep(wait_secs)
 

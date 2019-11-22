@@ -18,10 +18,10 @@ class CrawledDataListEntity(db.Model):
         return False
 
 class CrawledDataListEntityTags(db.Model):
-    __tablename__ = 'crawleddatalistentitytags'
+    __tablename__ = 'CrawledDataListEntityTags'
 
     tag = db.Column(db.String(255), primary_key=True)
-    cid = db.Column(db.String(255), db.ForeignKey('crawleddatalistentity.cid'), primary_key=True)
+    cid = db.Column(db.String(255), db.ForeignKey('CrawledDataListentity.cid'), primary_key=True)
 
     def __repr__(self):
         return '<CrawledDataListEntityTags {0} {1}>'.format(self.tag, self.cid)
