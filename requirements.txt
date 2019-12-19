@@ -8,3 +8,4 @@ pytest
 pytest-mock
 pytest-circleci-parallelized
 pandas
+alpha_vantage
