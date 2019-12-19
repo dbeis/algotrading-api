@@ -28,9 +28,9 @@ class TwitterCrawler(Crawler):
         if not self.has_more_items:
             raise StopIteration(f"No more data to scrape. Last scraped tweet: {self.min_position}")
         
-        if not self.min_position == '' # if not first request
+        if not self.min_position == '': # if not first request
             time.sleep(self.wait_secs)
-            
+
         headers = self.session.cookies.get_dict()
         self.set_headers(headers, self.url + self.min_position)
         
