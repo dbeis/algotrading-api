@@ -1,15 +1,16 @@
 from typing import List
-from .CrawledDataRecord import *
+from .CrawledTwitterDataRecord import *
 import json
 
-class CrawledDataListRequest(object):
 
-    def __init__(self, data: List[CrawledData]) -> None:
+class CrawledTwitterDataListRequest(object):
+
+    def __init__(self, data: List[CrawledTwitterData]) -> None:
         self.data = data
 
     @classmethod
     def from_json(cls, data):
-        x = list(map(CrawledData.from_json, data['data']))
+        x = list(map(CrawledTwitterData.from_json, data['data']))
         return cls(x)
 
     def serialize(self):
@@ -18,12 +19,12 @@ class CrawledDataListRequest(object):
 
 class CrawledDataListResponse(object):
 
-    def __init__(self, data: List[CrawledDataResponse]) -> None:
+    def __init__(self, data: List[CrawledTwitterDataResponse]) -> None:
         self.data = data
 
     @classmethod
     def from_json(cls, data):
-        x = list(map(CrawledDataResponse.from_json, data['data']))
+        x = list(map(CrawledTwitterDataResponse.from_json, data['data']))
         return cls(x)
 
     def serialize(self):

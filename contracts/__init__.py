@@ -1,10 +1,10 @@
-from .CrawledDataRecord import *
-from .CrawledDataRecordList import *
+from .CrawledTwitterDataRecord import *
+from .CrawledTwitterDataRecordList import *
 
 from .EconDataRecord import *
 from .EconDataList import *
 
 __all__ = ["CrawledData", "CrawledDataResponse", \
-    "CrawledDataListRequest", "CrawledDataListResponse", \
+           "CrawledTwitterDataListRequest", "CrawledDataListResponse", \
         "EconData", "EconDataResponse", \
             "EconDataListRequest", "EconDataListResponse"]

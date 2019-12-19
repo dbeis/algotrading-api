@@ -1,7 +1,8 @@
 from typing import List
 import json
 
-class CrawledData(object):
+
+class CrawledTwitterData(object):
 
     def __init__(self, cid: str, content: str, timestamp: int, tags: List[str]) -> None:
         self.cid = cid
@@ -13,7 +14,8 @@ class CrawledData(object):
     def from_json(cls, data):
         return cls(**data)
 
-class CrawledDataResponse(object):
+
+class CrawledTwitterDataResponse(object):
 
     def __init__(self, cid: str, content: str, timestamp: int) -> None:
         self.cid = cid
@@ -26,4 +28,3 @@ class CrawledDataResponse(object):
 
     def serialize(self):
         return json.dumps(self.__dict__)
-    

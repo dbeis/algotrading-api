@@ -2,7 +2,6 @@ from crawler.crawler_base import Crawler
 import requests as req
 from contracts import *
 import time 
-import json
 from discord import *
 import requests
 from bs4 import BeautifulSoup
@@ -60,7 +59,7 @@ class TwitterCrawler(Crawler):
         self.min_position = self.json_response['min_position']
         self.has_more_items = self.json_response['has_more_items']
 
-        new_data = CrawledDataListRequest(self.tweets_from_batch(self.json_response['items_html']))
+        new_data = CrawledTwitterDataListRequest(self.tweets_from_batch(self.json_response['items_html']))
 
         return new_data
 

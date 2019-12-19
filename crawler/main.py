@@ -4,6 +4,7 @@ from discord import notify, status_update, warning_update, human_required_update
 # List of available crawlers to use with the CLI
 crawlers = [TwitterCrawler]
 
+
 """ Basic crawler lifetime: initialization and basic loop """
 def start_crawler(crawler_name, options):
     crawler = [c for c in crawlers if c.__name__ == crawler_name]
