@@ -32,5 +32,3 @@ class CrawledTwitterDataListEntityTags(db.Model):
         if isinstance(other, CrawledTwitterDataListEntity):
             return self.tag == other.tag and self.cid == other.cid
         return False
-
-        

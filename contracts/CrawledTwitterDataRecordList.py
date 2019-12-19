@@ -17,7 +17,7 @@ class CrawledTwitterDataListRequest(object):
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
 
 
-class CrawledDataListResponse(object):
+class CrawledTwitterDataListResponse(object):
 
     def __init__(self, data: List[CrawledTwitterDataResponse]) -> None:
         self.data = data
