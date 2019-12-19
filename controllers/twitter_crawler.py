@@ -10,14 +10,14 @@ from entities import *
 from .common import ok, error, not_found
 from flask import request
 
+bp_twitter_crawler = flask.Blueprint('twitter_crawler', __name__)
 
-bp_crawler = flask.Blueprint('crawler', __name__)
 
-@bp_crawler.route('/', methods=['GET'])
+@bp_twitter_crawler.route('/', methods=['GET'])
 def index():
     return 'bp_crawler index'
 
-@bp_crawler.route('/query', methods=['GET'])
+@bp_twitter_crawler.route('/query', methods=['GET'])
 def query_data():
     page = flask.request.args.get('page', default = 1, type = int)
 
@@ -34,7 +34,7 @@ def query_data():
     
     return ok()
 
-@bp_crawler.route('/insert', methods=['POST'])
+@bp_twitter_crawler.route('/insert', methods=['POST'])
 def insert_data():
     req = CrawledDataListRequest.from_json(json.loads(flask.request.data))
 
@@ -62,29 +62,7 @@ def insert_data():
 
     return ok()
 
-
-@bp_crawler.route('/insert_econ', methods=['POST'])
-def insert_econ_data():
-    req = EconDataListRequest.from_json(json.loads(flask.request.data))
-
-    if req is None or req.data is None or len(req.data) == 0:
-        return json.dumps({ error: ''})
-    # validate
-    for record in req.data:
-        if record is None or record.timestamp is None or record.equity is None:
-            return error()
-        #=============================================
-        #       placeholder
-        #=============================================
-        
-        #if record.tags is None or len(record.tags) < 1:
-            #return error('Not enough tags') 
-        # check max tag count maybe?
-
-    return ok()
-
-
-@bp_crawler.route('/latest', methods=['GET'])
+@bp_twitter_crawler.route('/latest', methods=['GET'])
 def latest():
     r = CrawledDataListEntity.query.order_by(CrawledDataListEntity.timestamp.desc()).limit(1).all()
     if r is None or len(r) == 0:

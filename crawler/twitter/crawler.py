@@ -1,6 +1,5 @@
 from crawler.crawler_base import Crawler
-
-from ..common import *
+import requests as req
 from contracts import *
 import time 
 import json
@@ -23,6 +22,7 @@ class TwitterCrawler(Crawler):
             5 # Minimum 1 sec for scraping fairplay
         self.min_position = ''
         self.has_more_items = True
+        self.base_url = config['base_url'] if 'base_url' in config else 'localhost:8080'
     
     def __getitem__(self, index):
         if not self.has_more_items:
@@ -69,7 +69,7 @@ class TwitterCrawler(Crawler):
             return
 
         try:
-            response = post_social_data(data)
+            response = req.post(url = self.base_url + '/api/twitter_crawler/insert', data=data.serialize())
             if response.status_code != 200:
                 # bad request? 404? duplicates? -- only thing that matters is that it is not OK
                 # connectivity is not bad because exception was not raised, so no reschedule
