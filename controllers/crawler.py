@@ -5,6 +5,7 @@ import json
 
 from contracts.CrawledDataRecord import *
 from contracts.CrawledDataRecordList import *
+from contracts.EconDataList import EconDataListRequest
 from entities import *
 from .common import ok, error, not_found
 from flask import request
@@ -58,6 +59,27 @@ def insert_data():
     ])
 
     api.db.session.commit()
+
+    return ok()
+
+
+@bp_crawler.route('/insert_econ', methods=['POST'])
+def insert_econ_data():
+    req = EconDataListRequest.from_json(json.loads(flask.request.data))
+
+    if req is None or req.data is None or len(req.data) == 0:
+        return json.dumps({ error: ''})
+    # validate
+    for record in req.data:
+        if record is None or record.timestamp is None or record.equity is None:
+            return error()
+        #=============================================
+        #       placeholder
+        #=============================================
+        
+        #if record.tags is None or len(record.tags) < 1:
+            #return error('Not enough tags') 
+        # check max tag count maybe?
 
     return ok()
 

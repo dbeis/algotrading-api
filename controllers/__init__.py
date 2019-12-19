@@ -1,1 +1,1 @@
-from .installer import installer
+from .installer import install_controllers
