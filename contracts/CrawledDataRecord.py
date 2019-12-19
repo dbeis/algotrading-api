@@ -3,7 +3,7 @@ import json
 
 class CrawledData(object):
 
-    def __init__(self, cid: str, content: str, timestamp: float, tags: List[str]) -> None:
+    def __init__(self, cid: str, content: str, timestamp: int, tags: List[str]) -> None:
         self.cid = cid
         self.content = content
         self.timestamp = timestamp
@@ -15,7 +15,7 @@ class CrawledData(object):
 
 class CrawledDataResponse(object):
 
-    def __init__(self, cid: str, content: str, timestamp: float) -> None:
+    def __init__(self, cid: str, content: str, timestamp: int) -> None:
         self.cid = cid
         self.content = content
         self.timestamp = timestamp

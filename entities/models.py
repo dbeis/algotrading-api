@@ -5,7 +5,7 @@ class CrawledDataListEntity(db.Model):
 
     cid = db.Column(db.String(255), primary_key=True)
     content = db.Column(db.Text())
-    timestamp = db.Column(db.Float())
+    timestamp = db.Column(db.Integer())
 
     def __repr__(self):
         return '<CrawledDataListEntity {0} {1} {2}>'.format(self.cid, self.content, str(self.timestamp))

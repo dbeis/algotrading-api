@@ -1,1 +1,0 @@
-from .alpha_crawl import get_stock

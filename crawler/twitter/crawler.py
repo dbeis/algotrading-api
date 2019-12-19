@@ -8,6 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
+
 class TwitterCrawler(Crawler):
     def __init__(self, config):
         self.config = config
@@ -18,11 +19,11 @@ class TwitterCrawler(Crawler):
         self.session = requests.Session()
         self.url = config['url'] if 'url' in config and config['url'] else \
             'https://twitter.com/i/search/timeline?l=&f=tweets&q=bitcoin&src=typed&max_position='
-        self.wait_secs = config['wait_secs'] if 'wait_secs' in config and config['wait_secs'] else \
+        self.wait_secs = int(config['wait_secs']) if 'wait_secs' in config and config['wait_secs'] else \
             5 # Minimum 1 sec for scraping fairplay
         self.min_position = ''
         self.has_more_items = True
-        self.base_url = config['base_url'] if 'base_url' in config else 'localhost:8080'
+        self.base_url = config['base_url'] if 'base_url' in config else 'http://localhost:8080'
     
     def __getitem__(self, index):
         if not self.has_more_items:
@@ -40,7 +41,7 @@ class TwitterCrawler(Crawler):
             print(str(e))
             # timeout
             notify('crawler', warning_update(str(e), 'twitter'))
-            return None # Maybe set up for a retry, or continue in a retry loop
+            raise StopIteration(str(e)) # Maybe set up for a retry, or continue in a retry loop
         except requests.exceptions.TooManyRedirects as e:
             print(str(e))
             notify('crawler', error_update(str(e), 'twitter'))
@@ -62,7 +63,6 @@ class TwitterCrawler(Crawler):
         new_data = CrawledDataListRequest(self.tweets_from_batch(self.json_response['items_html']))
 
         return new_data
-        
 
     def post(self, data):
         if data is None:
@@ -93,14 +93,14 @@ class TwitterCrawler(Crawler):
         crawledData_tweets = []
         for html_tweet in html_tweets:
             crawledData_tweets.append(
-                CrawledData( 
+                CrawledData(
                     html_tweet.get('data-item-id'),
                     html_tweet.select_one('li .content .js-tweet-text-container').text,
-                    html_tweet.select_one('li .time span[data-time]').get('data-time'),
+                    int(html_tweet.select_one('li .time span[data-time]').get('data-time')),
                     ['bitcoin']
                 )
             )
-        
+
         return crawledData_tweets
 
     def set_headers(self, headers, url=None):

@@ -9,8 +9,8 @@ if __name__ == '__main__':
         exit()
     
     crawler = args[0]
-    if crawler not in map(lambda x: str(x), crawlers):
-        print(f'{crawler} is not a valid crawler.\n Please select one from: {crawlers}.')
+    if crawler not in map(lambda x: x.__name__, crawlers):
+        print(f'{crawler} is not a valid crawler.\n Please select one from: {list(map(lambda x: x.__name__, crawlers))}.')
         exit()
     
     params = args[1:]
