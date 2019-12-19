@@ -1,5 +1,5 @@
 import sys
-from crawler import available_crawlers, start_crawler
+from crawler import crawlers, start_crawler
 
 # python start_crawler.py [crawler] arg0:val0 ... argN:valN
 if __name__ == '__main__':
@@ -9,8 +9,8 @@ if __name__ == '__main__':
         exit()
     
     crawler = args[0]
-    if crawler not in map(lambda x: str(x), available_crawlers):
-        print(f'{crawler} is not a valid crawler.\n Please select one from: {available_crawlers}.')
+    if crawler not in map(lambda x: str(x), crawlers):
+        print(f'{crawler} is not a valid crawler.\n Please select one from: {crawlers}.')
         exit()
     
     params = args[1:]
