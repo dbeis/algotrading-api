@@ -1,1 +1,1 @@
-from .crawler import start_tweet_crawler
+from .crawler import TwitterCrawler

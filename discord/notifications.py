@@ -55,7 +55,7 @@ def get_json_payload(username: str = 'bot', content: str = None, embeds: List = 
 def simple_notification(title: str, message: str, username: str = 'bot', color: str = colors['gray']):
     return get_json_payload(username, None, embeds=[embedding(title, message, color)])
 
-# use these
+# use these to send messages to disocrd
 def status_update(message: str, username: str = 'bot'):
     return simple_notification('Status Update', message, username, colors['green'])
 
