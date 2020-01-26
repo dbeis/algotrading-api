@@ -94,7 +94,7 @@ class TwitterCrawler(Crawler):
         crawledData_tweets = []
         for html_tweet in html_tweets:
             crawledData_tweets.append(
-                CrawledData(
+                CrawledTwitterData(
                     html_tweet.get('data-item-id'),
                     html_tweet.select_one('li .content .js-tweet-text-container').text,
                     int(html_tweet.select_one('li .time span[data-time]').get('data-time')),

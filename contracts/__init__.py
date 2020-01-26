@@ -4,7 +4,7 @@ from .CrawledTwitterDataRecordList import *
 from .EconDataRecord import *
 from .EconDataList import *
 
-__all__ = ["CrawledData", "CrawledDataResponse", \
-           "CrawledTwitterDataListRequest", "CrawledDataListResponse", \
+__all__ = ["CrawledTwitterData", "CrawledTwitterDataResponse", \
+           "CrawledTwitterDataListRequest", "CrawledTwitterDataListResponse", \
         "EconData", "EconDataResponse", \
             "EconDataListRequest", "EconDataListResponse"]
