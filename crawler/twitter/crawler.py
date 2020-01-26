@@ -18,10 +18,20 @@ class TwitterCrawler(Crawler):
         print('Retrieving latest data for progress')
         # Init config
         self.session = requests.Session()
-        self.url = config['url'] if 'url' in config and config['url'] else \
-            'https://twitter.com/i/search/timeline?l=&f=tweets&q=bitcoin&src=typed&max_position='
-        self.wait_secs = int(config['wait_secs']) if 'wait_secs' in config and config['wait_secs'] else \
-            5 # Minimum 1 sec for scraping fairplay
+        self.params = {
+            'keywords': 'bitcoin',
+            'since': '',
+            'until': '',
+            'from_position': '',
+            'wait_secs': 5
+        }
+        if 'keywords' in config and config['keywords']: self.params['keywords'] = config['keywords']
+        if 'since' in config and config['since']: self.params['since'] = config['since']  
+        if 'until' in config and config['until']: self.params['until'] = config['until']
+        if 'from_position' in config and config['from_position']: self.params['from_position'] = config['from_position']
+        if 'wait_secs' in config and config['wait_secs']: self.params['wait_secs'] = max(int(config['wait_secs']), 1)
+
+        self.url = 'https://twitter.com/i/search/timeline?l=&f=tweets&{}&src=typed&max_position={}'.format(self.get_q(), self.params['from_position'])
         self.min_position = ''
         self.has_more_items = True
         self.base_url = config['base_url'] if 'base_url' in config else 'http://localhost:8080'
@@ -31,7 +41,7 @@ class TwitterCrawler(Crawler):
             raise StopIteration(f"No more data to scrape. Last scraped tweet: {self.min_position}")
         
         if not self.min_position == '': # if not first request
-            time.sleep(self.wait_secs)
+            time.sleep(self.params['wait_secs'])
 
         headers = self.session.cookies.get_dict()
         self.set_headers(headers, self.url + self.min_position)
@@ -56,13 +66,12 @@ class TwitterCrawler(Crawler):
             raise StopIteration(str(e))
 
         self.json_response = json.loads(response.content.decode("utf-8"))        
-                
+        
         # set up for next iteration
         self.min_position = self.json_response['min_position']
         self.has_more_items = self.json_response['has_more_items']
 
         new_data = CrawledTwitterDataListRequest(self.tweets_from_batch(self.json_response['items_html']))
-
         return new_data
 
     def post(self, data):
@@ -98,7 +107,7 @@ class TwitterCrawler(Crawler):
                     html_tweet.get('data-item-id'),
                     html_tweet.select_one('li .content .js-tweet-text-container').text,
                     int(html_tweet.select_one('li .time span[data-time]').get('data-time')),
-                    ['bitcoin']
+                    self.params['keywords'].split(',')
                 )
             )
 
@@ -112,3 +121,8 @@ class TwitterCrawler(Crawler):
         headers['Accept-Language'] = 'en' # Optional
         headers['User-Agent'] = 'TweetScraper' # Mandatory
         headers['Accept-Encoding'] = 'gzip,deflate' # Optional
+
+    def get_q(self):
+        return 'q={}{}{}'.format(self.params['keywords'].replace(',', ' '), \
+            (' since:' if self.params['since'] else '') + self.params['since'], \
+            (' until:' if self.params['until'] else '') + self.params['until'])
